@@ -11,7 +11,11 @@ fundamental diagram of pedestrian traffic with an outstanding performance. In th
 free parameters (rmin and rmax) of the model accounts for the great variety of experimental fundamental diagrams
 reported in the literature. Moreover, this variety can be interpreted in terms of these model parameters.
 
-![](https://github.com/gbaliarda/dinamica-peatonal/blob/main/visualization/animation.gif)
+![](https://github.com/eperezok/pedestrian-simulation/blob/main/results/animation.gif)
+
+![](https://github.com/eperezok/pedestrian-simulation/blob/main/results/flow_rate_vs_time.png)
+
+![](https://github.com/eperezok/pedestrian-simulation/blob/main/results/flow_rate_comp.png)
 
 # Requirements
 
@@ -118,8 +122,3 @@ python visualization/exits_per_dt.py
 ```bash
 python visualization/flow_rate.py
 ```
-
-# Authors
-
-- Baliarda Gonzalo - 61490
-- Pérez Ezequiel - 61475

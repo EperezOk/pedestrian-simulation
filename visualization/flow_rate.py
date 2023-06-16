@@ -28,8 +28,8 @@ def main() -> None:
     plt.errorbar(exit_widths, flow_rates, yerr=errors, fmt='o', capsize=3, markersize=4, color="black")
     plt.plot(exit_widths, flow_rates)  # Connect markers with straight lines
 
-    plt.xlabel("Ancho de salida (m)", fontsize=18)
-    plt.ylabel("Caudal (personas/s)", fontsize=18)
+    plt.xlabel("Exit width (m)", fontsize=14)
+    plt.ylabel("Flow rate (people/s)", fontsize=14)
 
     plt.tight_layout()
     plt.grid()
@@ -46,8 +46,8 @@ def main() -> None:
     plt.plot(exit_widths, curve, color='red', label=f"y = {slope:.2f}d + {intercept:.2f}")
 
     # Customize the plot
-    plt.xlabel("Ancho de salida (m)", fontsize=18)
-    plt.ylabel("Caudal (personas/s)", fontsize=18)
+    plt.xlabel("Exit width (m)", fontsize=14)
+    plt.ylabel("Flow rate (people/s)", fontsize=14)
 
     # Save and show the plot
     plt.tight_layout()
@@ -101,37 +101,42 @@ def run_simulations(config, rounds: int = 3):
             # Get the stationary period, between 10 and 45 seconds
             lower_bound = np.where(np.array(simulations[d][j]["times"]) >= 10)[0][0]
             upper_bound = np.where(np.array(simulations[d][j]["times"]) <= 45)[0][-1]
-            stationary_times = np.array(simulations[d][j]["times"])[lower_bound:upper_bound]
-            stationary_exits = np.array(simulations[d][j]["exits"])[lower_bound:upper_bound]
+            stationary_times = np.array(simulations[d][j]["times"])
+            stationary_exits = np.array(simulations[d][j]["exits"])
 
-            # Linear regression
-            coefficients = np.polyfit(stationary_times, stationary_exits, 1)
-            slope = coefficients[0]
-            intercept = coefficients[1]
-            # Calculate the curve of best fit
-            curve = slope * stationary_times + intercept
+            # Get the flow rate over time, for the stationary period
+            dt = 0.025
+            time_window_steps = int(10 / dt) # 10 seconds
+            time_steps = int(1 / dt)         # 1 second
 
-            # PLot 1 linear regression as an example
-            if j == 0 and d == 2.4:
-                plt.scatter(stationary_times[::50], stationary_exits[::50], color='blue')
-                plt.plot(stationary_times[::50], curve[::50], color='red', label=f"y = {slope:.2f}t + {intercept:.2f}")
+            flow_rates = []
+            times = []
 
-                # Customize the plot
-                plt.xlabel("Tiempo (s)", fontsize=18)
-                plt.ylabel("Egresos", fontsize=18)
-
-                # Save and show the plot
-                plt.tight_layout()
-                plt.grid()
-                plt.legend()
-                plt.savefig("out/exits_dt_regression.png")
-                plt.show()
-
-            simulations[d][j]["flow_rate"] = slope
+            for k in range(0, len(stationary_times) - time_window_steps + 1, time_steps):
+                exits = stationary_exits[k:k+time_window_steps]
+                # Get the amount of people that exited in the time window (people / second)
+                flow_rate = (exits[-1] - exits[0]) / (time_window_steps * dt)
+                flow_rates.append(flow_rate)
+                times.append(k * dt)
+            
+            # Plot a sample of the flow rate over time
+            if j == 0:
+                plt.plot(times, flow_rates, marker="o", markersize=3, markerfacecolor="black", markeredgecolor="black", label=f"d={d} ; N={pedestrians[i]}")
+            
+            # Save the flow rate for the current simulation
+            simulations[d][j]["flow_rate"] = np.mean(flow_rates)
         
         # Get the average flow rate for current exit width, and the standard deviation
         flow_rates = [simulations[d][j]["flow_rate"] for j in range(rounds)]
         simulations[d]["flow_rate"] = (np.mean(flow_rates), np.std(flow_rates))
+    
+    plt.xlabel("Exit width (m)", fontsize=14)
+    plt.ylabel("Flow rate (people/s)", fontsize=14)
+    plt.tight_layout()
+    plt.grid()
+    plt.legend()
+    plt.savefig("out/flow_rate_vs_time.png")
+    plt.show()
 
     return simulations
 
@@ -171,8 +176,8 @@ def exit_rate_comp(simulations, exit_widths, pedestrians):
         plt.errorbar(times, exits, xerr=errors, fmt='o', capsize=3, markersize=4, color="black")
         plt.plot(times, exits, label=f"d={d} ; N={max_exits}")
 
-    plt.xlabel("Tiempo (s)", fontsize=18)
-    plt.ylabel("Egresos", fontsize=18)
+    plt.xlabel("Time (s)", fontsize=14)
+    plt.ylabel("Exits", fontsize=14)
 
     plt.tight_layout()
     plt.grid()

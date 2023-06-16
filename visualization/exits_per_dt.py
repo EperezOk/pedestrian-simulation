@@ -15,8 +15,8 @@ def main() -> None:
 
         plt.plot(times, exits)
 
-    plt.xlabel("Tiempo (s)", fontsize=18)
-    plt.ylabel("Egresos", fontsize=18)
+    plt.xlabel("Time (s)", fontsize=14)
+    plt.ylabel("Exits", fontsize=14)
 
     plt.tight_layout()
     plt.grid()
@@ -57,8 +57,8 @@ def main() -> None:
     plt.errorbar(times, exits, xerr=errors, fmt='o', capsize=3, markersize=4, color="black")
     plt.plot(times, exits)  # Connect markers with straight lines
 
-    plt.xlabel("Tiempo (s)", fontsize=18)
-    plt.ylabel("Egresos", fontsize=18)
+    plt.xlabel("Time (s)", fontsize=14)
+    plt.ylabel("Exits", fontsize=14)
 
     plt.tight_layout()
     plt.grid()
