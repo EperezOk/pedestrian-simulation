@@ -117,7 +117,7 @@ python visualization/visuals.py
 python visualization/exits_per_dt.py
 ```
 
-- Visualize flow rate for different exit widths and pedestrian amounts:
+- Visualize **flow rate** for different exit widths and pedestrian amounts:
 
 ```bash
 python visualization/flow_rate.py
